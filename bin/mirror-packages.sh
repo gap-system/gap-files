@@ -43,9 +43,18 @@ fi
 
 git checkout --quiet --force -B main origin/main
 
+# List the packages explicitly rather than relying on download_packages.py to
+# default to all of them: older versions of that script simply do nothing when
+# given no arguments, which would make this whole job a silent no-op.
+set -- packages/*/meta.json
+if [ ! -f "$1" ]; then
+    echo "error: no packages/*/meta.json found in $REPO" >&2
+    exit 1
+fi
+
 # Downloading exits non-zero if any archive failed, which aborts the script
 # before the stamp is updated, so that the next run tries again.
-tools/download_packages.py
+tools/download_packages.py "$@"
 
 printf '%s\n' "$head" >"$STAMP"
 echo "mirrored package archives for $head"
