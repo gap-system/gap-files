@@ -27,13 +27,20 @@ serves `files.gap-system.org`. Assuming the `gap-files` host alias is set up in
 ssh gap-files
 ```
 
-Apache is managed centrally by the RZ; the vhost configuration is not readable
-or writable by `www-gap-files`. That is why the mirrors poll on a timer instead
-of being driven by a GitHub webhook the way <https://www.gap-system.org> is (see
-`etc/README.server.md` in the [GapWWW](https://github.com/gap-system/GapWWW)
-repository): a timer needs no web server change and no shared secret, and a run
-that fails or is missed is simply retried on the next tick, rather than leaving
-the mirror silently stale.
+Apache is managed centrally by the RZ, but the vhost supports everything needed
+to extend the site: PHP is enabled (8.4 at the time of writing) and `.htaccess`
+files are honoured, so redirects and CGI-style endpoints can be added without
+involving the RZ, exactly as <https://www.gap-system.org> does.
+
+The mirrors nevertheless poll on a timer rather than being driven by a GitHub
+webhook the way that site is (see `etc/README.server.md` in the
+[GapWWW](https://github.com/gap-system/GapWWW) repository). That is a
+deliberate choice, not a limitation: a timer needs no shared secret, and a run
+that fails or is missed is retried on the next tick instead of leaving the
+mirror silently stale — which is the exact failure this setup exists to prevent.
+The cost is up to 15 minutes of latency, which does not matter for an archive.
+A webhook could be added on top for lower latency, with the timer kept as the
+safety net.
 
 ### Directory layout
 
@@ -60,7 +67,6 @@ directory inside the git clone instead of updating the mirror.
 | Unit | Schedule | What it does |
 | --- | --- | --- |
 | `gap-mirror-packages` | every 15 min | Update the PackageDistro clone; download any new package archives |
-| `gap-mirror-packages-verify` | Sundays 04:00 | Same, but re-checks every archive's checksum |
 | `gap-mirror-releases` | hourly | Mirror any newly published stable GAP release |
 
 The 15 minute run is cheap: it does a `git fetch` and, if `origin/main` has not
@@ -69,9 +75,17 @@ compares against `~/data/.mirror-packages.ok` rather than the checked out
 commit, so a run that failed part-way through is retried instead of being
 skipped as already up to date.
 
-Verifying is separated out because it re-reads every archive — well over a
-gigabyte across an NFS mount — which is far too expensive to do every quarter
-of an hour but well worth doing weekly.
+There is deliberately no periodic re-verification job. Running
+`mirror-packages.sh --force` re-hashes only the archives of the *currently*
+distributed packages — about 0.5 GiB of the 2.5 GiB mirror, and precisely the
+files that were most recently downloaded and checksummed. The roughly 730
+historical archives, which are the reason this mirror exists and the ones with
+years of exposure to bit rot, cannot be checked that way at all, because their
+checksums are no longer recorded in any `meta.json`. A worthwhile integrity
+check would need a manifest of checksums covering every file ever published
+here; until that exists, a weekly `--force` run would be NFS churn over the
+least interesting part of the archive. (`--force` remains available for running
+by hand.)
 
 ## Installation
 
@@ -85,10 +99,7 @@ mkdir -p ~/.config/systemd/user
 cp ~/data/gap-files/etc/gap-mirror-*.service ~/.config/systemd/user/
 cp ~/data/gap-files/etc/gap-mirror-*.timer ~/.config/systemd/user/
 systemctl --user daemon-reload
-systemctl --user enable --now \
-    gap-mirror-packages.timer \
-    gap-mirror-packages-verify.timer \
-    gap-mirror-releases.timer
+systemctl --user enable --now gap-mirror-packages.timer gap-mirror-releases.timer
 ```
 
 The units are copied rather than symlinked, so remember to copy them again
