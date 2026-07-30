@@ -1,0 +1,8 @@
+[Unit]
+Description=Mirror GAP release archives to files.gap-system.org
+Documentation=https://github.com/gap-system/gap-files
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/data/gap-files/bin/mirror-gap-releases.py

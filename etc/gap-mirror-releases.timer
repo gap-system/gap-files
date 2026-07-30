@@ -1,0 +1,13 @@
+[Unit]
+Description=Mirror GAP release archives hourly
+Documentation=https://github.com/gap-system/gap-files
+
+[Timer]
+# Releases are rare, so hourly is ample; a new release appears on the mirror
+# within an hour of being published.
+OnCalendar=hourly
+Persistent=true
+RandomizedDelaySec=10min
+
+[Install]
+WantedBy=timers.target

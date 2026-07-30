@@ -1,0 +1,14 @@
+[Unit]
+Description=Mirror GAP package archives regularly
+Documentation=https://github.com/gap-system/gap-files
+
+[Timer]
+# Polling rather than reacting to a webhook: it needs no web server
+# configuration and no shared secret, and a run that fails or is missed is
+# simply retried on the next tick.
+OnBootSec=5min
+OnUnitActiveSec=15min
+RandomizedDelaySec=2min
+
+[Install]
+WantedBy=timers.target
