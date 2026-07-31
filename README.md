@@ -27,10 +27,20 @@ serves `files.gap-system.org`. Assuming the `gap-files` host alias is set up in
 ssh gap-files
 ```
 
-Apache is managed centrally by the RZ, but the vhost supports everything needed
-to extend the site: PHP is enabled (8.4 at the time of writing) and `.htaccess`
-files are honoured, so redirects and CGI-style endpoints can be added without
-involving the RZ, exactly as <https://www.gap-system.org> does.
+This is one of three GAP sites on that machine, the others being
+<https://www.gap-system.org> and <https://docs.gap-system.org>. They follow the
+same conventions — directory layout, systemd user units, lingering — which are
+described once in
+[`etc/README.server.md`](https://github.com/gap-system/GapWWW/blob/master/etc/README.server.md)
+in the GapWWW repository. Start there if you are rebuilding the hosting rather
+than just this site.
+
+The machine is run by the central IT department of RPTU Kaiserslautern-Landau,
+and Apache is configured centrally by them. The vhost nevertheless supports
+everything needed to extend the site: PHP is enabled (8.4 at the time of
+writing) and `.htaccess` files are honoured, so redirects and CGI-style
+endpoints can be added without involving them, exactly as
+<https://www.gap-system.org> does.
 
 The mirrors nevertheless poll on a timer rather than being driven by a GitHub
 webhook the way that site is (see `etc/README.server.md` in the
