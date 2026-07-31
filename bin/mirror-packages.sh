@@ -11,6 +11,9 @@ set -eu
 # Archives are served over HTTP, so they must be world readable.
 umask 022
 
+# Resolve our own directory before changing into the clone.
+BINDIR=$(cd "$(dirname "$0")" && pwd)
+
 REPO="${PACKAGEDISTRO_DIR:-$HOME/data/PackageDistro}"
 STAMP="$HOME/data/.mirror-packages.ok"
 
@@ -55,6 +58,12 @@ fi
 # Downloading exits non-zero if any archive failed, which aborts the script
 # before the stamp is updated, so that the next run tries again.
 tools/download_packages.py "$@"
+
+# Newly downloaded archives land directly in pkg/; sort them into their package
+# directory, leaving a symlink behind at the flat path. Doing this here rather
+# than in download_packages.py keeps the layout a concern of this server alone,
+# and that script still finds an already sorted archive through its symlink.
+"$BINDIR/reorganise-pkg.py"
 
 printf '%s\n' "$head" >"$STAMP"
 echo "mirrored package archives for $head"

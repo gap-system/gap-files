@@ -57,7 +57,9 @@ safety net.
 ```
 /srv/www/www-gap-files/data/     (== ~/data, and ~/http -> ~/data/http)
 ├── http/                        document root of files.gap-system.org
-│   ├── pkg/                     all package archives, flat
+│   ├── pkg/                     all package archives, one directory per package
+│   │   ├── browse/              e.g. browse/Browse-1.8.23.tar.gz
+│   │   └── Browse-1.8.23.tar.gz symlink, so the old flat URL still works
 │   ├── gap-4.16/{tar.gz,zip,exe}/   release archives, one dir per series
 │   ├── gap-4.15/...
 │   └── ...                      older series, in their historical layouts
@@ -156,6 +158,27 @@ Updates `~/data/PackageDistro` to `origin/main` and runs its
 `packages/*/meta.json` that is not already present, verifies it against the
 `ArchiveSHA256` recorded there, and writes it atomically. Pass `--force` to
 re-check archives even when the distribution has not changed.
+
+### `bin/reorganise-pkg.py`
+
+Sorts the archives in `pkg/` into one directory per package, and leaves a
+symlink at each old flat location. `mirror-packages.sh` runs it after
+downloading, and it can be run by hand at any time; archives already sorted are
+left alone.
+
+Symlinks rather than redirect rules in `.htaccess`, because the names cannot be
+parsed reliably: about an eighth of the archive names published over the years
+are not of the form `<package>-<version>`, among them `transgrp3.5.tar.gz`,
+`classicpres1.21.tar.gz` and `ToricVarieties.tar.gz`. A symlink is also
+completely transparent — the old URL returns the same bytes with no redirect,
+and it keeps working for anything that is not HTTP. Should the flat names ever
+be considered no longer worth keeping, deleting the symlinks is all it takes.
+
+Each name is matched against the packages we know, longest prefix first, with
+the prefixes taken from the package metadata in the PackageDistro clone, so
+cases like `sl2reps` publishing `sl2-reps-1.1.tar.gz` need no special handling.
+An archive whose name matches nothing is left where it is and reported: it is
+still served from its old path, so this is untidy rather than broken.
 
 ### `bin/mirror-gap-releases.py`
 

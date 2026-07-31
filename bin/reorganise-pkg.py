@@ -151,14 +151,17 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     print(f"\n{len(todo) - len(unresolved) - len(failures)} archive(s) sorted")
     if unresolved:
-        # Left in place: serving them from the old path still works, so this is
-        # a nuisance rather than an outage.
-        print(f"{len(unresolved)} could not be assigned to a package:", file=sys.stderr)
+        # Not an error: an archive left in place is still served from its old
+        # path, exactly as it was before. Report it so the name can be dealt
+        # with, but do not fail the job that called us over it.
+        print(
+            f"warning: {len(unresolved)} archive(s) could not be assigned to a package "
+            "and were left in place:",
+            file=sys.stderr,
+        )
         for fname in unresolved:
             print(f"  {fname}", file=sys.stderr)
-    if failures or unresolved:
-        return 1
-    return 0
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":
