@@ -66,8 +66,8 @@ directory inside the git clone instead of updating the mirror.
 
 | Unit | Schedule | What it does |
 | --- | --- | --- |
-| `gap-mirror-packages` | every 15 min | Update the PackageDistro clone; download any new package archives |
-| `gap-mirror-releases` | hourly | Mirror any newly published stable GAP release |
+| `gap-files-packages` | every 15 min | Update the PackageDistro clone; download any new package archives |
+| `gap-files-releases` | hourly | Mirror any newly published stable GAP release |
 
 The 15 minute run is cheap: it does a `git fetch` and, if `origin/main` has not
 moved since the last successful run, exits immediately. It deliberately
@@ -96,10 +96,10 @@ session. As `www-gap-files`:
 ```sh
 git clone https://github.com/gap-system/gap-files ~/data/gap-files
 mkdir -p ~/.config/systemd/user
-cp ~/data/gap-files/etc/gap-mirror-*.service ~/.config/systemd/user/
-cp ~/data/gap-files/etc/gap-mirror-*.timer ~/.config/systemd/user/
+cp ~/data/gap-files/etc/gap-files-*.service ~/.config/systemd/user/
+cp ~/data/gap-files/etc/gap-files-*.timer ~/.config/systemd/user/
 systemctl --user daemon-reload
-systemctl --user enable --now gap-mirror-packages.timer gap-mirror-releases.timer
+systemctl --user enable --now gap-files-packages.timer gap-files-releases.timer
 ```
 
 The units are copied rather than symlinked, so remember to copy them again
@@ -117,15 +117,15 @@ hand once, to see what they do:
 
 ```sh
 systemctl --user list-timers
-systemctl --user status gap-mirror-packages.service
-journalctl --user -u 'gap-mirror-*' -n 100
-journalctl --user -f -u gap-mirror-packages.service   # follow a running job
+systemctl --user status gap-files-packages.service
+journalctl --user -u 'gap-files-*' -n 100
+journalctl --user -f -u gap-files-packages.service   # follow a running job
 ```
 
 To force a run immediately, without waiting for the timer:
 
 ```sh
-systemctl --user start gap-mirror-packages.service
+systemctl --user start gap-files-packages.service
 ```
 
 A failed run leaves the service in a failed state and the stamp file untouched;

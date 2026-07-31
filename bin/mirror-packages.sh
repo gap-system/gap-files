@@ -3,7 +3,7 @@
 # Update the local PackageDistro clone and download any package archives that
 # are missing from the mirror served at https://files.gap-system.org/pkg/.
 #
-# Run periodically by gap-mirror-packages.timer. Pass --force to re-check every
+# Run periodically by gap-files-packages.timer. Pass --force to re-check every
 # archive even when the package distribution has not changed.
 
 set -eu
