@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>files.gap-system.org</title>
+<style>
+  body { max-width: 46em; margin: 2em auto; padding: 0 1em;
+         font-family: system-ui, sans-serif; line-height: 1.5; }
+  h1 { font-size: 1.6em; } h2 { font-size: 1.15em; margin-top: 2em; }
+  code { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; }
+  dt { font-family: monospace; margin-top: 0.8em; }
+  dd { margin: 0.2em 0 0 2em; }
+  .note { background: #f7f7f7; border-left: 3px solid #bbb; padding: 0.6em 1em; }
+</style>
+</head>
+<body>
+
+<h1>files.gap-system.org</h1>
+
+<p>
+Archives of <a href="https://www.gap-system.org">the GAP computer algebra
+system</a> and of its packages.
+</p>
+
+<p>
+This server exists for two reasons. It keeps a copy of everything we distribute
+that is independent of GitHub, so that a serious outage there does not leave GAP
+undownloadable. And it is the archive of record for older package releases:
+package authors routinely remove old versions from their own sites, and a copy
+here may well be the only one left. Nothing is ever deleted from this server.
+</p>
+
+<p class="note">
+For current downloads, please prefer the canonical locations: GAP releases from
+<a href="https://github.com/gap-system/gap/releases">the GAP repository</a> or
+<a href="https://www.gap-system.org/install/">the installation instructions</a>,
+and packages from the <code>ArchiveURL</code> given in their
+<code>PackageInfo.g</code>. Those are served by a CDN and will normally be
+faster. Use this server when you need an old version, or when the canonical
+location is unavailable.
+</p>
+
+<h2>What is here</h2>
+
+<p>
+There are no directory listings: this server was repeatedly scraped in its
+entirety, costing gigabytes of traffic a day, so browsing had to be turned off.
+The layout below is therefore documented rather than listed, so that you can
+construct the URL you need.
+</p>
+
+<dl>
+
+<dt>/pkg/</dt>
+<dd>
+  Every package archive that has been part of the package distribution, current
+  and historical. Archives live in a directory per package, for example
+  <code>/pkg/browse/Browse-1.8.23.tar.gz</code>.
+  <br />
+  The archive file name and its checksum for any current package are recorded in
+  <a href="https://github.com/gap-system/PackageDistro">the PackageDistro
+  repository</a>, in <code>packages/&lt;package&gt;/meta.json</code>.
+</dd>
+
+<dt>/gap-4.16/, /gap-4.15/, … /gap-4.9/</dt>
+<dd>
+  One directory per GAP 4 release series from 4.9 onwards, holding every release
+  in that series. From 4.12 on the layout is
+  <code>/gap-&lt;major&gt;.&lt;minor&gt;/&lt;format&gt;/gap-&lt;version&gt;&lt;suffix&gt;</code>,
+  where format is <code>tar.gz</code>, <code>zip</code> or <code>exe</code>, for
+  example
+  <a href="/gap-4.16/tar.gz/gap-4.16.0.tar.gz"><code>/gap-4.16/tar.gz/gap-4.16.0.tar.gz</code></a>.
+  A <code>-core</code> variant without the packages exists alongside the full
+  archive, and every archive has a matching <code>.sha256</code> file. Series
+  4.9 to 4.11 predate those conventions and additionally offer
+  <code>tar.bz2</code>, <code>zip</code> and <code>win.zip</code>.
+</dd>
+
+<dt>/gap44/ … /gap48/</dt>
+<dd>
+  GAP 4.4 to 4.8, in the layout used at the time, with a directory per format
+  (<code>tar.gz</code>, <code>tar.bz2</code>, <code>zip</code>,
+  <code>win.zip</code>, and <code>zoo</code> for 4.4). Each of those holds a
+  <code>packages/</code> directory with the package versions that shipped
+  alongside those releases, for example
+  <code>/gap48/tar.gz/packages/</code>.
+</dd>
+
+<dt>/gap-3.4.4/</dt>
+<dd>GAP 3.4.4, the last release of GAP 3, together with its bugfixes and deposited files.</dd>
+
+</dl>
+
+<p>
+Further locations still resolve, so that links published long ago keep working.
+They are kept deliberately, but anything not described above should not be used
+for new work.
+</p>
+
+<h2>How it is kept up to date</h2>
+
+<p>
+Package archives and GAP releases are mirrored automatically, within about
+fifteen minutes and an hour of publication respectively. Every download is
+verified against the checksum published with it before being put in place. The
+scripts that do this, and the documentation of the server itself, are in
+<a href="https://github.com/gap-system/gap-files">the gap-files repository</a>.
+</p>
+
+<p>
+Please report anything missing or broken to
+<a href="https://github.com/gap-system/gap-files/issues">the issue tracker</a>
+or to <a href="mailto:support@gap-system.org">support@gap-system.org</a>.
+</p>
+
+</body>
+</html>

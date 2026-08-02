@@ -57,6 +57,8 @@ safety net.
 ```
 /srv/www/www-gap-files/data/     (== ~/data, and ~/http -> ~/data/http)
 ├── http/                        document root of files.gap-system.org
+│   ├── index.html               symlink to ../gap-files/http/index.html
+│   ├── robots.txt               symlink to ../gap-files/http/robots.txt
 │   ├── pkg/                     all package archives, one directory per package
 │   │   ├── browse/              e.g. browse/Browse-1.8.23.tar.gz
 │   │   └── Browse-1.8.23.tar.gz symlink, so the old flat URL still works
@@ -73,6 +75,29 @@ safety net.
 downloading an archive publishes it directly. `bin/mirror-packages.sh` refuses
 to run if that symlink is missing, since otherwise it would quietly fill a
 directory inside the git clone instead of updating the mirror.
+
+### The landing page
+
+Directory listings are switched off — the server used to be scraped in its
+entirety, at a cost of gigabytes of traffic a day — and `robots.txt` disallows
+everything. That leaves `http/index.html` as the only way anyone can find out
+what is on the server, so it describes the layout and the URL conventions rather
+than being a placeholder.
+
+It is served through a symlink into this repository:
+
+```
+~/http/index.html -> ../gap-files/http/index.html
+~/http/robots.txt -> ../gap-files/http/robots.txt
+```
+
+so `git pull` alone updates the live page. Both files used to exist only on the
+server, where nothing stopped them drifting away from any copy kept in git — the
+same trap that `etc/docs.htaccess` in the GapWWW repository fell into.
+
+Note that the page deliberately does not mention the flat `pkg/<archive>` names
+or the older top-level directories, even though they keep working. Documenting
+them would invite new use of paths we would rather see fade out.
 
 ## What runs when
 
